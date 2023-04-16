@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Vuejs to Pega Demo</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+	<div id="app">
+		<h2>VueJs to Pega</h2>
+		<form @submit.prevent="postData">
+			<label for="name">Name:</label>
+			<input type="text" id="name" v-model="pyName" required>
+			<label for="contacttype">Contact Type:</label>
+			<input type="text" id="contacttype" v-model="pyContactType" required>
+			<label for="primarycontactid">Primary Contact ID:</label>
+			<input type="text" id="primarycontactid" v-model="pyPrimaryContact" required>
+			<label for="note">Note:</label>
+			<input type="text" id="note" v-model="pyNote" required>
+			<button type="submit">Submit</button>
+		</form>
+		<div v-if="responseData">
+			<h3>Response Data:</h3>
+			<p>Status: {{ responseData.status }}</p>
+			<p>Data: {{ responseData.data }}</p>
+		</div>
+	</div>
+	<script>
+		new Vue({
+			el: '#app',
+			data: {
+					title: '',
+					body: '',
+					response: '',
+					apiUrl: 'http://localhost:8181/prweb/api/v1/cases',
+					username: 'sushil',
+					password: 'rules'
+							  
+			},
+			methods: {
+				postData() {
+					const data = {
+						  "caseTypeID": "SROrg-ServiceReq-Work-GeneralRequest",
+						  "processID": "",
+						  "parentCaseID": "",
+						  "content": {
+						  pyName: this.pyName,
+						  pyContactType: this.pyContactType,
+						  pyPrimaryContact: this.pyPrimaryContact,
+						  pyNote: this.pyNote
+
+				  }
+					};
+					const config = {
+						headers: {
+							'authorization': 'Basic ' + btoa('sushil:rules'),
+							'content-type': 'application/json'
+						}
+					};
+					axios.post('http://localhost:8181/prweb/api/v1/cases', data, config)
+						.then(response => {
+						    console.log(response)
+							this.responseData = response;
+						})
+						.catch(error => {
+							console.log(error);
+						});
+				}
+			}
+		});
+	</script>
+</body>
+</html>
